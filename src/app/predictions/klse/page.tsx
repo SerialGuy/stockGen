@@ -103,12 +103,10 @@ export default function KLSEPredictionsPage() {
     const API_URL = `${API_BASE_URL}/predict/v1`;
     const API_V2_URL = `${API_BASE_URL}/predict/v2`;  
     // Add symbol parameter to API calls
-    const apiUrlWithSymbol = `${API_URL}?symbol=${currentSymbol}`;
-    const apiV2UrlWithSymbol = `${API_V2_URL}?symbol=${currentSymbol}`;
     
     Promise.all([
-      fetch(apiUrlWithSymbol).then(res => res.json()),
-      fetch(apiV2UrlWithSymbol).then(res => res.json()),
+      fetch(API_URL).then(res => res.json()),
+      fetch(API_V2_URL).then(res => res.json()),
     ])
       .then(([data1, data2]) => {
         // Log raw responses before any parsing
@@ -157,7 +155,7 @@ export default function KLSEPredictionsPage() {
         setError("Failed to fetch predictions: " + err.message);
         setLoading(false);
       });
-  }, [currentSymbol]); // Re-fetch when symbol changes
+  }, []); // Re-fetch when symbol changes
 
   // Only show chart if all arrays are valid and lengths match
   const hasChartData =
