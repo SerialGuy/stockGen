@@ -26,9 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-const API_URL = `${API_BASE_URL}/predict/v1`;
-const API_V2_URL = `${API_BASE_URL}/predict/v2`;
+
 
 export default function KLSEPredictionsPage() {
   const { selectedMarket, currentMarket, getMarketsForTheme } = useMarket();
@@ -100,6 +98,10 @@ export default function KLSEPredictionsPage() {
 
   useEffect(() => {
     setLoading(true);
+
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
+    const API_URL = `${API_BASE_URL}/predict/v1`;
+    const API_V2_URL = `${API_BASE_URL}/predict/v2`;  
     // Add symbol parameter to API calls
     const apiUrlWithSymbol = `${API_URL}?symbol=${currentSymbol}`;
     const apiV2UrlWithSymbol = `${API_V2_URL}?symbol=${currentSymbol}`;
