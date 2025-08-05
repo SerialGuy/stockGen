@@ -186,29 +186,45 @@ function LayoutContent({ children, pathname }: { children: React.ReactNode; path
         <div style={logoRowStyle}>
           <span style={logoDotStyle} />
           <button
-            onClick={handleMarketToggle}
+          onClick={handleMarketToggle}
+          style={{
+            ...dynamicLogoTextStyle,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            transition: 'all 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = colors.text.accent;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = colors.text.primary;
+          }}
+        >
+          <span style={{ display: 'flex', gap: 8 }}>
+            <span style={{ opacity: selectedMarket === 'bursa' ? 1 : 0.5 }}>
+              📈 Bursa
+            </span>
+            <span style={{ opacity: selectedMarket === 'forex' ? 1 : 0.5 }}>
+              💱 Forex
+            </span>
+          </span>
+          <span
             style={{
-              ...dynamicLogoTextStyle,
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = colors.text.accent;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = colors.text.primary;
+              fontSize: '0.8rem',
+              color: colors.text.tertiary,
+              marginLeft: 4,
             }}
           >
-            <span>{selectedMarket === 'bursa' ? '📈' : '💱'}</span>
-            <span>{currentMarket.name}</span>
-            <span style={{ fontSize: '0.8rem', color: colors.text.tertiary, marginLeft: 4 }}>▼</span>
-          </button>
+            ▼
+          </span>
+        </button>
+
+
         </div>
         <nav style={{ ...navStyle, flex: 1 }}>
           <Link href="/" style={pathname === "/" ? navLinkActiveStyle : dynamicNavLinkStyle}>Dashboard</Link>
@@ -275,9 +291,20 @@ function LayoutContent({ children, pathname }: { children: React.ReactNode; path
             </div>
           </div>
           <div style={headerActionsStyle}>
-            <span className="material-icons" style={{...headerIconStyle, color: colors.text.tertiary}}>notifications_none</span>
-            <Image style={{...avatarStyle, border: `2px solid ${colors.border.primary}`}} src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" />
-            <span style={dynamicUsernameStyle}>Trader</span>
+          <span className="material-icons" style={{ ...headerIconStyle, color: colors.text.tertiary }}>
+            notifications_none
+          </span>
+
+          <Image
+            style={{ ...avatarStyle, border: `2px solid ${colors.border.primary}` }}
+            src="https://randomuser.me/api/portraits/men/32.jpg"
+            alt="User"
+            width={40} // set your preferred size
+            height={40}
+          />
+
+          <span style={dynamicUsernameStyle}>Trader</span>
+
           </div>
         </header>
         <main style={mainStyle}>
