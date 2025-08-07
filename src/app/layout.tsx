@@ -12,10 +12,10 @@ const sidebarStyle: CSSProperties = {
   width: 240,
   background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)',
   borderRight: '1px solid #e2e8f0',
-  padding: '24px 16px',
+  padding: '28px 20px',
   display: 'flex',
   flexDirection: 'column',
-  gap: 24,
+  gap: 28,
   minWidth: 0,
   boxSizing: 'border-box',
   position: 'fixed',
@@ -23,7 +23,7 @@ const sidebarStyle: CSSProperties = {
   left: 0,
   height: '100vh',
   zIndex: 30,
-  boxShadow: '2px 0 10px rgba(0,0,0,0.05)',
+  boxShadow: '4px 0 20px rgba(0,0,0,0.08)',
 };
 const logoRowStyle: CSSProperties = {
   display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24,
@@ -54,27 +54,27 @@ const navSectionStyle: CSSProperties = {
 const mainWrapperStyle: CSSProperties = {
   marginLeft: 240,
   minHeight: '100vh',
-  background: 'linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%)',
+  background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
   width: 'calc(100vw - 240px)',
   display: 'flex',
   flexDirection: 'column',
+  overflow: 'hidden',
 };
 const mainStyle: CSSProperties = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   minWidth: 0,
-  alignItems: 'center',
-  justifyContent: 'flex-start',
   width: '100%',
   background: 'none',
+  overflow: 'hidden',
 };
 const headerStyle: CSSProperties = {
   width: '100%',
   background: 'rgba(255, 255, 255, 0.95)',
   backdropFilter: 'blur(10px)',
   borderBottom: '1px solid #e2e8f0',
-  padding: '16px 32px',
+  padding: '20px 32px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -82,8 +82,8 @@ const headerStyle: CSSProperties = {
   position: 'sticky' as CSSProperties['position'],
   top: 0,
   zIndex: 20,
-  minHeight: 64,
-  boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+  minHeight: 72,
+  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
 };
 const searchStyle: CSSProperties = {
   flex: 1,
@@ -110,16 +110,14 @@ const usernameStyle: CSSProperties = {
   fontWeight: 600, color: '#333', fontSize: '1rem',
 };
 const contentStyle: CSSProperties = {
-  padding: '24px 0 0 0',
   flex: 1,
   minWidth: 0,
-  maxWidth: 2000,
   width: '100%',
+  height: '100%',
   boxSizing: 'border-box',
-  margin: '0 auto',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+  overflow: 'hidden',
 };
 
 function LayoutContent({ children, pathname }: { children: React.ReactNode; pathname: string }) {
@@ -130,16 +128,18 @@ function LayoutContent({ children, pathname }: { children: React.ReactNode; path
   // Get theme-aware market data for header
   const currentMarket = getMarketsForTheme(theme)[selectedMarket];
 
-  const handleMarketToggle = () => {
-    switchMarket(selectedMarket === 'bursa' ? 'forex' : 'bursa');
-  };
+
 
   // Dynamic styles based on theme
   const dynamicSidebarStyle = {
     ...sidebarStyle,
-    background: colors.bg.sidebar,
+    background: theme === 'dark' 
+      ? 'linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%)' 
+      : colors.bg.sidebar,
     borderRight: `1px solid ${colors.border.primary}`,
-    boxShadow: theme === 'dark' ? '2px 0 10px rgba(0,0,0,0.3)' : '2px 0 10px rgba(0,0,0,0.05)',
+    boxShadow: theme === 'dark' 
+      ? '0 8px 32px rgba(0,0,0,0.6)' 
+      : '2px 0 10px rgba(0,0,0,0.05)',
   };
 
   const dynamicLogoTextStyle = {
@@ -164,8 +164,13 @@ function LayoutContent({ children, pathname }: { children: React.ReactNode; path
 
   const dynamicHeaderStyle = {
     ...headerStyle,
-    background: theme === 'dark' ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+    background: theme === 'dark' 
+      ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95))' 
+      : 'rgba(255, 255, 255, 0.95)',
     borderBottom: `1px solid ${colors.border.primary}`,
+    boxShadow: theme === 'dark' 
+      ? '0 4px 16px rgba(0,0,0,0.5)' 
+      : '0 2px 8px rgba(0,0,0,0.1)',
   };
 
   const dynamicSearchStyle = {
@@ -185,52 +190,15 @@ function LayoutContent({ children, pathname }: { children: React.ReactNode; path
       <aside style={dynamicSidebarStyle}>
         <div style={logoRowStyle}>
           <span style={logoDotStyle} />
-          <button
-          onClick={handleMarketToggle}
-          style={{
-            ...dynamicLogoTextStyle,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = colors.text.accent;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = colors.text.primary;
-          }}
-        >
-          <span style={{ display: 'flex', gap: 8 }}>
-            <span style={{ opacity: selectedMarket === 'bursa' ? 1 : 0.5 }}>
-              📈 Bursa
-            </span>
-            <span style={{ opacity: selectedMarket === 'forex' ? 1 : 0.5 }}>
-              💱 Forex
-            </span>
+          <span style={dynamicLogoTextStyle}>
+            StockAPI
           </span>
-          <span
-            style={{
-              fontSize: '0.8rem',
-              color: colors.text.tertiary,
-              marginLeft: 4,
-            }}
-          >
-            ▼
-          </span>
-        </button>
-
-
         </div>
         <nav style={{ ...navStyle, flex: 1 }}>
           <Link href="/" style={pathname === "/" ? navLinkActiveStyle : dynamicNavLinkStyle}>Dashboard</Link>
           <a style={dynamicNavLinkStyle} href="#">Market</a>
-          <a style={dynamicNavLinkStyle} href="#">Portfolio</a>
-          <a style={dynamicNavLinkStyle} href="#">News</a>
+          <Link href="/portfolio" style={pathname === "/portfolio" ? navLinkActiveStyle : dynamicNavLinkStyle}>Portfolio</Link>
+          <Link href="/news" style={pathname === "/news" ? navLinkActiveStyle : dynamicNavLinkStyle}>News</Link>
           <Link href={selectedMarket === 'bursa' ? '/predictions/klse' : '/predictions/forex'} style={pathname.startsWith("/predictions") ? navLinkActiveStyle : dynamicNavLinkStyle}>Predictions</Link>
           <div style={dynamicNavSectionStyle}>Account</div>
           <a style={dynamicNavLinkStyle} href="#">Profile</a>
@@ -334,11 +302,66 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
         <style>{`
           @media (max-width: 900px) {
-            aside { width: 60px !important; padding: 16px 4px 16px 4px !important; }
-            .mainWrapper { margin-left: 60px !important; width: calc(100vw - 60px) !important; }
-            header { padding: 12px 8px !important; }
-            main { padding: 0 !important; }
-            .content { max-width: 100vw !important; padding: 0 4px !important; }
+            aside { 
+              width: 60px !important; 
+              padding: 16px 4px 16px 4px !important; 
+            }
+            .mainWrapper { 
+              margin-left: 60px !important; 
+              width: calc(100vw - 60px) !important; 
+            }
+            header { 
+              padding: 12px 8px !important; 
+            }
+            main { 
+              padding: 0 !important; 
+            }
+            .content { 
+              max-width: 100vw !important; 
+              padding: 0 4px !important; 
+            }
+          }
+          
+          @media (max-width: 768px) {
+            aside { 
+              width: 50px !important; 
+              padding: 12px 2px 12px 2px !important; 
+            }
+            .mainWrapper { 
+              margin-left: 50px !important; 
+              width: calc(100vw - 50px) !important; 
+            }
+            header { 
+              padding: 8px 6px !important; 
+              min-height: 56px !important;
+            }
+            .chart-title {
+              font-size: 1.25rem !important;
+            }
+            .market-info {
+              font-size: 0.75rem !important;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            aside { 
+              width: 40px !important; 
+              padding: 8px 1px 8px 1px !important; 
+            }
+            .mainWrapper { 
+              margin-left: 40px !important; 
+              width: calc(100vw - 40px) !important; 
+            }
+            header { 
+              padding: 6px 4px !important; 
+              min-height: 48px !important;
+            }
+            .chart-title {
+              font-size: 1.125rem !important;
+            }
+            .market-info {
+              font-size: 0.7rem !important;
+            }
           }
         `}</style>
       </body>

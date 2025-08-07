@@ -29,7 +29,7 @@ ChartJS.register(
 
 
 export default function KLSEPredictionsPage() {
-  const { selectedMarket, currentMarket, getMarketsForTheme } = useMarket();
+  const { selectedMarket, currentMarket, getMarketsForTheme, switchMarket } = useMarket();
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
   
@@ -102,7 +102,6 @@ export default function KLSEPredictionsPage() {
     const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
     const API_URL = `${API_BASE_URL}/predict/v1`;
     const API_V2_URL = `${API_BASE_URL}/predict/v2`;  
-    // Add symbol parameter to API calls
     
     Promise.all([
       fetch(API_URL).then(res => res.json()),
@@ -307,7 +306,41 @@ export default function KLSEPredictionsPage() {
 
   return (
     <div style={pageStyles.container}>
-      <h1 style={pageStyles.title}>{currentDisplayName} 30-Day Forecast</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h1 style={pageStyles.title}>{currentDisplayName} 30-Day Forecast</h1>
+                 <button
+           onClick={() => switchMarket('forex')}
+           style={{
+             padding: '8px 16px',
+             borderRadius: '8px',
+             border: 'none',
+             background: theme === 'dark' 
+               ? 'linear-gradient(135deg, #60a5fa, #3b82f6)' 
+               : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+             color: '#ffffff',
+             fontSize: '0.875rem',
+             fontWeight: 600,
+             cursor: 'pointer',
+             transition: 'all 0.2s ease',
+             display: 'flex',
+             alignItems: 'center',
+             gap: '8px',
+           }}
+                     onMouseEnter={(e) => {
+             e.currentTarget.style.transform = 'translateY(-1px)';
+             e.currentTarget.style.boxShadow = theme === 'dark' 
+               ? '0 4px 16px rgba(96, 165, 250, 0.4)' 
+               : '0 4px 12px rgba(59, 130, 246, 0.3)';
+           }}
+           onMouseLeave={(e) => {
+             e.currentTarget.style.transform = 'translateY(0)';
+             e.currentTarget.style.boxShadow = 'none';
+           }}
+        >
+          <span>💱</span>
+          <span>Switch to Forex</span>
+        </button>
+      </div>
       {loading && <div style={pageStyles.loadingContainer}>Loading predictions...</div>}
       {error && <div style={pageStyles.errorContainer}>{error}</div>}
       {hasChartData && (

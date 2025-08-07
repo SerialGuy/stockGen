@@ -91,34 +91,34 @@ export const themes = {
   dark: {
     // Background colors
     bg: {
-      primary: '#1e293b',
-      secondary: '#334155',
-      tertiary: '#475569',
-      gradient: 'linear-gradient(145deg, #1e293b, #334155)',
-      sidebar: 'linear-gradient(180deg, #1e293b 0%, #334155 100%)',
+      primary: '#0f172a',
+      secondary: '#1e293b',
+      tertiary: '#334155',
+      gradient: 'linear-gradient(145deg, #0f172a, #1e293b, #334155)',
+      sidebar: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
       card: '#1e293b',
-      chart: '#334155'
+      chart: '#1e293b'
     },
     // Text colors
     text: {
       primary: '#f8fafc',
-      secondary: '#cbd5e1',
-      tertiary: '#94a3b8',
+      secondary: '#e2e8f0',
+      tertiary: '#cbd5e1',
       accent: '#60a5fa',
-      inverse: '#1e293b'
+      inverse: '#0f172a'
     },
     // Border colors
     border: {
-      primary: '#475569',
-      secondary: '#64748b',
+      primary: '#334155',
+      secondary: '#475569',
       accent: '#3b82f6'
     },
     // Shadow colors
     shadow: {
-      sm: '0 2px 8px rgba(0,0,0,0.3)',
-      md: '0 4px 12px rgba(0,0,0,0.4)',
-      lg: '0 6px 20px rgba(0,0,0,0.5)',
-      accent: '0 4px 12px rgba(59,130,246,0.4)'
+      sm: '0 2px 8px rgba(0,0,0,0.4)',
+      md: '0 4px 16px rgba(0,0,0,0.5)',
+      lg: '0 8px 32px rgba(0,0,0,0.6)',
+      accent: '0 4px 16px rgba(96,165,250,0.4)'
     }
   }
 };

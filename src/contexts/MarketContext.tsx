@@ -62,7 +62,7 @@ interface MarketContextType {
 const MarketContext = createContext<MarketContextType | undefined>(undefined);
 
 export function MarketProvider({ children }: { children: ReactNode }) {
-  const [selectedMarket, setSelectedMarket] = useState<MarketKey>('bursa');
+  const [selectedMarket, setSelectedMarket] = useState<MarketKey>('forex');
   
   // Default to light theme for initial load
   const markets = getMarkets('light');
