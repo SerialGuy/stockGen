@@ -38,47 +38,110 @@ export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch news from Google Sheets
+    // Fetch news from Google Sheets with fallback
   useEffect(() => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        // Google Sheets API endpoint for the n8n-newsfeed sheet
-        const sheetId = '1vRD6zDwY_p-Hhqq8g2chiigNgonlXe8umIN3vpnmzcc';
-        const sheetName = 'n8n-newsfeed';
-        const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
         
-        const response = await fetch(url);
-        const text = await response.text();
-        
-                 // Parse the Google Sheets response
-         const jsonText = text.substring(47).slice(0, -2); // Remove Google's wrapper
-         const data: GoogleSheetsResponse = JSON.parse(jsonText);
-         
-         if (data.table && data.table.rows) {
-           const newsItems: NewsItem[] = data.table.rows
-             .slice(1) // Skip header row
-             .map((row: GoogleSheetsRow, index: number) => {
-               const cells = row.c || [];
-               return {
-                 id: `news-${index}`,
-                 title: cells[0]?.v || '',
-                 description: cells[3]?.v || '',
-                 url: cells[1]?.v || '',
-                 publishedAt: cells[2]?.v || '',
-                 source: 'Gold News',
-               };
-             })
-            .filter((item: NewsItem) => item.title && item.description) // Filter out empty items
-            .sort((a: NewsItem, b: NewsItem) => {
-              // Sort by publication date in descending order (newest first)
-              const dateA = new Date(a.publishedAt);
-              const dateB = new Date(b.publishedAt);
-              return dateB.getTime() - dateA.getTime();
-            });
+        // Try to fetch from Google Sheets first
+        try {
+          const sheetId = '1vRD6zDwY_p-Hhqq8g2chiigNgonlXe8umIN3vpnmzcc';
+          const sheetName = 'n8n-newsfeed';
+          const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
           
-          setNews(newsItems);
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const text = await response.text();
+          
+          // Parse the Google Sheets response
+          const jsonText = text.substring(47).slice(0, -2); // Remove Google's wrapper
+          const data: GoogleSheetsResponse = JSON.parse(jsonText);
+          
+          if (data.table && data.table.rows) {
+            const newsItems: NewsItem[] = data.table.rows
+              .slice(1) // Skip header row
+              .map((row: GoogleSheetsRow, index: number) => {
+                const cells = row.c || [];
+                return {
+                  id: `news-${index}`,
+                  title: cells[0]?.v || '',
+                  description: cells[3]?.v || '',
+                  url: cells[1]?.v || '',
+                  publishedAt: cells[2]?.v || '',
+                  source: 'Gold News',
+                };
+              })
+              .filter((item: NewsItem) => item.title && item.description) // Filter out empty items
+              .sort((a: NewsItem, b: NewsItem) => {
+                // Sort by publication date in descending order (newest first)
+                const dateA = new Date(a.publishedAt);
+                const dateB = new Date(b.publishedAt);
+                return dateB.getTime() - dateA.getTime();
+              });
+            
+            setNews(newsItems);
+            return; // Success, exit early
+          }
+        } catch (sheetsError) {
+          console.warn('Google Sheets fetch failed, using fallback data:', sheetsError);
         }
+        
+        // Fallback: Use mock data if Google Sheets fails
+        const fallbackNews: NewsItem[] = [
+          {
+            id: 'fallback-1',
+            title: 'Gold Prices Surge Amid Economic Uncertainty',
+            description: 'Gold prices have reached new highs as investors seek safe-haven assets during global economic uncertainty. The precious metal continues to show strong performance.',
+            url: 'https://example.com/gold-prices-surge',
+            publishedAt: new Date().toISOString(),
+            source: 'Gold News',
+          },
+          {
+            id: 'fallback-2',
+            title: 'Central Banks Increase Gold Reserves',
+            description: 'Major central banks around the world are increasing their gold reserves as part of their diversification strategy and risk management approach.',
+            url: 'https://example.com/central-banks-gold',
+            publishedAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+            source: 'Gold News',
+          },
+          {
+            id: 'fallback-3',
+            title: 'Gold Mining Stocks Show Strong Performance',
+            description: 'Gold mining companies are experiencing significant growth as gold prices continue to rise, creating opportunities for investors in the sector.',
+            url: 'https://example.com/gold-mining-stocks',
+            publishedAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+            source: 'Gold News',
+          },
+          {
+            id: 'fallback-4',
+            title: 'Technical Analysis: Gold Support Levels',
+            description: 'Technical analysts are identifying key support levels for gold prices, suggesting potential entry points for traders and investors.',
+            url: 'https://example.com/gold-technical-analysis',
+            publishedAt: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
+            source: 'Gold News',
+          },
+          {
+            id: 'fallback-5',
+            title: 'Gold ETFs See Record Inflows',
+            description: 'Gold exchange-traded funds are experiencing record inflows as retail and institutional investors increase their exposure to the precious metal.',
+            url: 'https://example.com/gold-etfs-inflows',
+            publishedAt: new Date(Date.now() - 345600000).toISOString(), // 4 days ago
+            source: 'Gold News',
+          },
+        ];
+        
+        setNews(fallbackNews);
+        
       } catch (err) {
         console.error('Error fetching news:', err);
         setError('Failed to load news. Please try again later.');
@@ -338,10 +401,24 @@ export default function NewsPage() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>Gold Market News</h1>
-        <p style={styles.subtitle}>Stay updated with the latest XAUUSD news and market insights</p>
-      </div>
+             <div style={styles.header}>
+         <h1 style={styles.title}>Gold Market News</h1>
+         <p style={styles.subtitle}>Stay updated with the latest XAUUSD news and market insights</p>
+         {news.length > 0 && news[0]?.id?.startsWith('fallback') && (
+           <div style={{
+             background: 'rgba(251, 191, 36, 0.1)',
+             border: '1px solid rgba(251, 191, 36, 0.3)',
+             borderRadius: '8px',
+             padding: '8px 16px',
+             marginTop: '16px',
+             fontSize: '0.875rem',
+             color: '#92400e',
+             display: 'inline-block',
+           }}>
+             📡 Showing sample data - Live feed temporarily unavailable
+           </div>
+         )}
+       </div>
 
       {/* Stats */}
       <div style={styles.statsContainer}>
@@ -387,10 +464,13 @@ export default function NewsPage() {
           <div style={styles.loadingSpinner} />
           <p>Loading latest gold news...</p>
         </div>
-      ) : error ? (
-        <div style={styles.errorContainer}>
-          <p>{error}</p>
-        </div>
+             ) : error ? (
+         <div style={styles.errorContainer}>
+           <p>{error}</p>
+           <p style={{ marginTop: '12px', fontSize: '0.9rem', opacity: 0.8 }}>
+             Showing sample gold market news. Live news feed will be available when connection is restored.
+           </p>
+         </div>
       ) : filteredNews.length === 0 ? (
         <div style={styles.emptyState}>
           <p>No gold news articles found matching your criteria.</p>
