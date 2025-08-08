@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 
 interface TradingViewChartProps {
@@ -17,6 +17,31 @@ declare global {
 const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, name, height = 500 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement | null>(null);
+
+  const createWidget = useCallback(() => {
+    if (containerRef.current && window.TradingView) {
+      widgetRef.current = new window.TradingView.widget({
+        autosize: true,
+        symbol: symbol,
+        interval: 'D',
+        timezone: 'Etc/UTC',
+        theme: 'light',
+        style: '1',
+        locale: 'en',
+        enable_publishing: false,
+        backgroundColor: 'rgba(255, 255, 255, 1)',
+        gridColor: 'rgba(240, 243, 250, 1)',
+        hide_top_toolbar: true,
+        hide_legend: true,
+        save_image: false,
+        calendar: false,
+        hide_volume: true,
+        support_host: 'https://www.tradingview.com',
+        container_id: containerRef.current.id
+      });
+    }
+  }, [symbol]);
+
   useEffect(() => {
     // Clean up previous widget
     if (widgetRef.current) {
@@ -68,31 +93,7 @@ const TradingViewChart: React.FC<TradingViewChartProps> = ({ symbol, name, heigh
         widgetRef.current = null;
       }
     };
-  }, [symbol]);
-
-  const createWidget = () => {
-    if (containerRef.current && window.TradingView) {
-      widgetRef.current = new window.TradingView.widget({
-        autosize: true,
-        symbol: symbol,
-        interval: 'D',
-        timezone: 'Etc/UTC',
-        theme: 'light',
-        style: '1',
-        locale: 'en',
-        enable_publishing: false,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        gridColor: 'rgba(240, 243, 250, 1)',
-        hide_top_toolbar: true,
-        hide_legend: true,
-        save_image: false,
-        calendar: false,
-        hide_volume: true,
-        support_host: 'https://www.tradingview.com',
-        container_id: containerRef.current.id
-      });
-    }
-  };
+  }, [symbol, createWidget]);
 
   const containerId = `tradingview-widget-${symbol.replace(/[^a-zA-Z0-9]/g, '')}-${Date.now()}`;
 

@@ -13,6 +13,22 @@ interface NewsItem {
   sentiment?: string;
 }
 
+interface GoogleSheetsCell {
+  v: string;
+}
+
+interface GoogleSheetsRow {
+  c: GoogleSheetsCell[];
+}
+
+interface GoogleSheetsTable {
+  rows: GoogleSheetsRow[];
+}
+
+interface GoogleSheetsResponse {
+  table: GoogleSheetsTable;
+}
+
 export default function NewsPage() {
   const { theme } = useTheme();
   const colors = getThemeColors(theme);
@@ -35,23 +51,24 @@ export default function NewsPage() {
         const response = await fetch(url);
         const text = await response.text();
         
-        // Parse the Google Sheets response
-        const jsonText = text.substring(47).slice(0, -2); // Remove Google's wrapper
-        const data = JSON.parse(jsonText);
-        
-        if (data.table && data.table.rows) {
-          const newsItems: NewsItem[] = data.table.rows
-            .slice(1) // Skip header row
-            .map((row: any, index: number) => {
-              const cells = row.c || [];
-              return {
-                id: `news-${index}`,
-                title: cells[0]?.v || '',
-                description: cells[3]?.v || '',
-                url: cells[1]?.v || '',
-                publishedAt: cells[2]?.v || '',
-              };
-            })
+                 // Parse the Google Sheets response
+         const jsonText = text.substring(47).slice(0, -2); // Remove Google's wrapper
+         const data: GoogleSheetsResponse = JSON.parse(jsonText);
+         
+         if (data.table && data.table.rows) {
+           const newsItems: NewsItem[] = data.table.rows
+             .slice(1) // Skip header row
+             .map((row: GoogleSheetsRow, index: number) => {
+               const cells = row.c || [];
+               return {
+                 id: `news-${index}`,
+                 title: cells[0]?.v || '',
+                 description: cells[3]?.v || '',
+                 url: cells[1]?.v || '',
+                 publishedAt: cells[2]?.v || '',
+                 source: 'Gold News',
+               };
+             })
             .filter((item: NewsItem) => item.title && item.description) // Filter out empty items
             .sort((a: NewsItem, b: NewsItem) => {
               // Sort by publication date in descending order (newest first)

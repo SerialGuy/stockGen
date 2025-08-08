@@ -88,7 +88,7 @@ export default function ForexPredictionsPage() {
   const [predictionData, setPredictionData] = useState<PredictionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [apiStatus, setApiStatus] = useState<any>(null);
+  const [apiStatus, setApiStatus] = useState<{ system_status: string; model_loaded: boolean; message?: string } | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   // Get current market data - for Forex, we'll use the Forex market data
@@ -313,9 +313,10 @@ export default function ForexPredictionsPage() {
       setLastUpdated(new Date().toLocaleString());
 
       setLoading(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("API Error:", err);
-      setError(`Failed to fetch data: ${err.message}`);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(`Failed to fetch data: ${errorMessage}`);
       setLoading(false);
     }
   };

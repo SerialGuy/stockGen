@@ -152,7 +152,7 @@ export default function PortfolioPage() {
       isPositive: true,
     },
     {
-      title: 'Today\'s Gain/Loss',
+             title: 'Today&apos;s Gain/Loss',
       value: '+$3,120.75',
       change: '+2.54%',
       isPositive: true,
@@ -234,7 +234,7 @@ export default function PortfolioPage() {
               <div style={styles.comingSoonIcon}>📊</div>
               <h2 style={styles.comingSoonTitle}>Portfolio Analytics Coming Soon</h2>
               <p style={styles.comingSoonText}>
-                We're working on advanced portfolio analytics including performance charts, 
+                We&apos;re working on advanced portfolio analytics including performance charts, 
                 risk analysis, and investment recommendations. Stay tuned for updates!
               </p>
             </div>
